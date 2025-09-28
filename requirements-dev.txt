@@ -1,0 +1,14 @@
+# Test framework
+pytest
+
+# Python SDK for AWS
+boto3
+
+# lib for requests
+requests
+
+# Library for mocking AWS services in unit tests
+moto[all]
+
+# Linter to ensure code quality and style
+flake8
