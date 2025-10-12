@@ -1,4 +1,4 @@
-name: CI - Linter
+name: CI - Linter & Tests
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: ["main"]
 
 jobs:
-  lint:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -26,3 +26,8 @@ jobs:
       - name: Run linter with flake8
         run: |
           flake8 src/ tests/ --count --show-source --statistics
+
+      - name: Run integration tests with pytest
+        run: pytest tests/integration/
+        env:
+          API_ENDPOINT_URL: ${{ secrets.API_ENDPOINT_URL }}
