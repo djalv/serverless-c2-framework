@@ -66,3 +66,6 @@ packaged.yaml
 *.pem
 *.key
 credentials.csv
+
+# Configuration files
+src/agent/config.ini
