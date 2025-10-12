@@ -26,6 +26,6 @@ def run_agent_loop():
 
             # -- Response task processing --
         else:
-            print(f"Check-in failed. Trying again in {sleep_interval} seconds.")
+            print(f"Check-in failed. Trying again in {sleep_interval}s.")
 
         time.sleep(sleep_interval)
