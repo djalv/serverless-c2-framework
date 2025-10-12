@@ -20,7 +20,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::396907900555:oidc-provider/token.actions.githubusercontent.com
+          role-to-assume: arn:aws:iam::396907900555:role/GitHubActions-AdminRole
           aws-region: us-east-1
 
       - name: Set up Python
