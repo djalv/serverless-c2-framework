@@ -1,1 +1,2 @@
+# Python SDK for AWS
 boto3

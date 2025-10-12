@@ -1,5 +1,6 @@
 # Test framework
 pytest
+pytest-dotenv
 
 # Python SDK for AWS
 boto3
