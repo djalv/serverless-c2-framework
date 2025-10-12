@@ -13,3 +13,6 @@ moto[all]
 
 # Linter to ensure code quality and style
 flake8
+
+# Python code formatter
+black
