@@ -28,14 +28,22 @@ Resources:
     Properties:
       FunctionName: c2-checkin-function
       Description: Function to record agent check-ins and return tasks.
-      CodeUri: 'src/c2_backend/checkin/'
+      CodeUri: '../src/c2_backend/checkin/'
       Handler: 'app.lambda_handler'
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref AgentsTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref AgentsTable
       Events:
         CheckInApiEvent:
           Type: Api
           Properties:
             Path: /checkin
             Method: post
+
+Outputs:
+  CheckInApiUrl:
+    Description: "API Gateway endpoint URL for Prod stage for CheckIn function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/checkin/"
