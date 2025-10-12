@@ -1,5 +1,4 @@
 import requests
-import json
 
 
 def perform_checkin(api_url, agent_data):
