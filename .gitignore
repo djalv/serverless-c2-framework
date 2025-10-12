@@ -66,3 +66,5 @@ packaged.yaml
 *.pem
 *.key
 credentials.csv
+
+.github/
