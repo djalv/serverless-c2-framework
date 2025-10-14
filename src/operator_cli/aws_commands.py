@@ -49,7 +49,7 @@ def send_task_to_agent(agent_id, command):
 
     except ClientError as e:
         error = e.response.get("Error", {}).get("Code")
-        print(f"Error: Agent not found or failed to submit task: {e}")
+        print(f"Error: {error} Agent not found or failed to submit task: {e}")
 
     except Exception as e:
         print(f"[ERROR] Unexpected error occurred while sending tasks: {e}")

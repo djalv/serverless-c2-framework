@@ -16,13 +16,13 @@ def agents():
     formatter.print_agents_table(agents_list)
 
 
-"""
+
 @cli.command()
 @click.argument("agent_id")
 @click.argument("command")
-def task(agent_id, command_string):
-    aws.commands.send_task_to_agent(agent_id, command)
-"""
+def task(agent_id, command):
+    aws_commands.send_task_to_agent(agent_id, command)
+
 
 if __name__ == "__main__":
     cli()
