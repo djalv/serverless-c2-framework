@@ -1,0 +1,8 @@
+# Python SDK for AWS
+boto3
+
+# Command line interface creation kit
+click
+
+# Writing rich text (with color and style) to the terminal
+rich
