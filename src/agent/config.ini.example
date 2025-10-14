@@ -1,3 +1,25 @@
+; -----------------------------------------------------------------------------
+; This is a sample configuration file for the agent.
+;
+; INSTRUCTIONS:
+; 1. Create a copy of this file and rename it to 'config.ini'.
+; 2. Fill in the values ​​below with your actual settings.
+; 3. The 'config.ini' file is ignored by Git and should NEVER be pushed
+; to the repository, as it contains sensitive information.
+; -----------------------------------------------------------------------------
+
+; IMPORTANT SECURITY NOTE:
+; In a real-world scenario, having a static, plaintext API URL in this file
+; is a significant SECURITY FLAW.
+;
+; - The URL acts as a static "Indicator of Compromise" (IoC). If the agent
+; is discovered, this URL can be used to identify and take down the entire
+; C2 infrastructure.
+;
+; - The professional approach uses abstraction layers, such as "Redirectors"
+; (disposable servers), to protect the real address of the main C2.
+; -----------------------------------------------------------------------------
+
 [c2]
 api_url = API_URL
 sleep_interval = 60
