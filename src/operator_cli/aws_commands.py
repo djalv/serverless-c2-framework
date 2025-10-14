@@ -36,3 +36,20 @@ def list_agents():
     except Exception as e:
         print(f"[ERROR] Unexpected error occurred while listing agents: {e}")
         return []
+
+
+def send_task_to_agent(agent_id, command):
+    try:
+        agents_table.update_item(
+            Key={"agentId": agent_id},
+            UpdateExpression="SET pendingTask = :task_value",
+            ExpressionAttributeValues={":task_value": command},
+        )
+        print("Task successfully sent to agent...")
+
+    except ClientError as e:
+        error = e.response.get("Error", {}).get("Code")
+        print(f"Error: Agent not found or failed to submit task: {e}")
+
+    except Exception as e:
+        print(f"[ERROR] Unexpected error occurred while sending tasks: {e}")
