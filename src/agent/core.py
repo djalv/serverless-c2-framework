@@ -24,7 +24,11 @@ def run_agent_loop():
                 new_agent_id = response_checkin["agentId"]
                 state.save_agent_id(new_agent_id)
 
-            # -- Response task processing --
+            if "task" in response_checkin:
+                received_task = response_checkin["task"]
+                if received_task and received_task != "no-task-for-now":
+                    print(f"\n[TASK RECEIVED]: {received_task}")
+
         else:
             print(f"Check-in failed. Trying again in {sleep_interval}s.")
 
