@@ -69,3 +69,6 @@ credentials.csv
 
 # Configuration files
 src/agent/config.ini
+
+# Project reports
+reports.txt
