@@ -16,7 +16,6 @@ def agents():
     formatter.print_agents_table(agents_list)
 
 
-
 @cli.command()
 @click.argument("agent_id")
 @click.argument("command")
