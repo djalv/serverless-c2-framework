@@ -21,7 +21,7 @@ def lambda_handler(event, context):
         # 1. Extract and validate request data
         req_body = event.get("body")
         if not req_body:
-            print("ERROR: Request body is empty or missing.")
+            logger.warning("ERROR: Request body is empty or missing.")
 
             return {
                 "statusCode": 400,  # Bad Request
