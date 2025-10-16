@@ -1,5 +1,6 @@
 from rich.console import Console
 from rich.table import Table
+from rich.panel import Panel
 
 
 def print_agents_table(agents_list: list):
@@ -24,3 +25,16 @@ def print_agents_table(agents_list: list):
         table.add_row(agent_id, last_seen, hostname, source_ip)
 
     console.print(table)
+
+
+def print_task_result(result_content: str, agent_id: str):
+    console = Console()
+
+    result_panel = Panel.fit(
+        result_content,
+        title=f"Agent's Result {agent_id}",
+        border_style="green",
+        padding=(1, 2),
+    )
+
+    console.print(result_panel)
