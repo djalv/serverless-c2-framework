@@ -1,7 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-
 Transform: AWS::Serverless-2016-10-31
-
 Description: 'Infrastructure for the C2 Serverless Framework - Software Testing Project.'
 
 Globals:
@@ -12,24 +10,29 @@ Globals:
 
 Resources:
   AgentsTable:
-    Type: 'AWS::DynamoDB::Table'
+    Type: AWS::DynamoDB::Table
     Properties:
-      TableName: 'c2-agents-table'
+      TableName: c2-agents-table
       AttributeDefinitions:
         - AttributeName: agentId
-          AttributeType: 'S'
+          AttributeType: S
       KeySchema:
-        - AttributeName: 'agentId'
-          KeyType: 'HASH'
+        - AttributeName: agentId
+          KeyType: HASH
       BillingMode: PAY_PER_REQUEST
-  
+
+  ResultsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: c2-results-bucket-alvaroneto-654561
+
   CheckInFunction:
     Type: AWS::Serverless::Function
     Properties:
       FunctionName: c2-checkin-function
       Description: Function to record agent check-ins and return tasks.
-      CodeUri: '../src/c2_backend/checkin/'
-      Handler: 'app.lambda_handler'
+      CodeUri: ../src/c2_backend/checkin/
+      Handler: app.lambda_handler
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref AgentsTable
@@ -43,7 +46,31 @@ Resources:
             Path: /checkin
             Method: post
 
+  StoreResultsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: c2-store-results-function
+      Description: Function to receive task results and save them to S3.
+      CodeUri: ../src/c2_backend/store_results/
+      Handler: app.lambda_handler
+      Environment:
+        Variables:
+          RESULTS_BUCKET_NAME: !Ref ResultsBucket
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref ResultsBucket
+      Events:
+        StoreResultsApiEvent:
+          Type: Api
+          Properties:
+            Path: /results
+            Method: post
+
 Outputs:
   CheckInApiUrl:
     Description: "API Gateway endpoint URL for Prod stage for CheckIn function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/checkin/"
+  
+  StoreResultsApiUrl:
+    Description: "API Gateway endpoint URL for Prod stage for StoreResults function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/results/"
