@@ -50,7 +50,7 @@ def lambda_handler(event, context):
 
         S3_CLIENT.put_object(Bucket=RESULTS_BUCKET_NAME, Key=s3_key, Body=task_result)
 
-        response_body = {"message": "Result stored successfully", "s3_key": s3_key}
+        response_body = {"message": "Result stored success", "s3_key": s3_key}
 
         return {
             "statusCode": 200,
