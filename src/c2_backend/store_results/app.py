@@ -48,7 +48,11 @@ def lambda_handler(event, context):
         timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
         s3_key = f"{agent_id}/{timestamp}.txt"
 
-        S3_CLIENT.put_object(Bucket=RESULTS_BUCKET_NAME, Key=s3_key, Body=task_result)
+        S3_CLIENT.put_object(
+            Bucket=RESULTS_BUCKET_NAME,
+            Key=s3_key,
+            Body=task_result
+        )
 
         response_body = {"message": "Result stored success", "s3_key": s3_key}
 
