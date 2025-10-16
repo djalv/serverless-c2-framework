@@ -21,5 +21,6 @@
 ; -----------------------------------------------------------------------------
 
 [c2]
-api_url = API_URL
+api_url = CheckInApiUrl
 sleep_interval = 60
+results_url = StoreResultsApiUrl

