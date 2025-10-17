@@ -33,6 +33,7 @@ def task(agent_id, command):
 
 
 if __name__ == "__main__":
+    formatter.print_banner()
     selected_agent = None
 
     while True:

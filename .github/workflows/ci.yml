@@ -35,7 +35,7 @@ jobs:
 
       - name: Run linter with flake8
         run: |
-          flake8 src/ tests/ --count --show-source --statistics
+          flake8 src/ tests/ --count --show-source --statistics --max-line-length=120
 
       - name: Run integration tests with pytest
         run: pytest tests/integration/

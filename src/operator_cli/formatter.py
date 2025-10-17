@@ -1,6 +1,40 @@
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
+from rich.rule import Rule
+
+
+def print_banner():
+    AETHERIS_ART = r"""
+ ▄▄▄      ▓█████▄▄▄█████▓ ██░ ██ ▓█████  ██▀███   ██▓  ██████ 
+▒████▄    ▓█   ▀▓  ██▒ ▓▒▓██░ ██▒▓█   ▀ ▓██ ▒ ██▒▓██▒▒██    ▒ 
+▒██  ▀█▄  ▒███  ▒ ▓██░ ▒░▒██▀▀██░▒███   ▓██ ░▄█ ▒▒██▒░ ▓██▄   
+░██▄▄▄▄██ ▒▓█  ▄░ ▓██▓ ░ ░▓█ ░██ ▒▓█  ▄ ▒██▀▀█▄  ░██░  ▒   ██▒
+ ▓█   ▓██▒░▒████▒ ▒██▒ ░ ░▓█▒░██▓░▒████▒░██▓ ▒██▒░██░▒██████▒▒
+ ▒▒   ▓▒█░░░ ▒░ ░ ▒ ░░    ▒ ░░▒░▒░░ ▒░ ░░ ▒▓ ░▒▓░░▓  ▒ ▒▓▒ ▒ ░
+  ▒   ▒▒ ░ ░ ░  ░   ░     ▒ ░▒░ ░ ░ ░  ░  ░▒ ░ ▒░ ▒ ░░ ░▒  ░ ░
+  ░   ▒      ░    ░       ░  ░░ ░   ░     ░░   ░  ▒ ░░  ░  ░  
+      ░  ░   ░  ░         ░  ░  ░   ░  ░   ░      ░        ░  
+                                                              
+""" # noqa W291
+    blue_chars = ["▓", "█", "▄", "▀"]
+    white_chars = ["▒", "░"]
+
+    colored_art = ""
+    for char in AETHERIS_ART:
+        if char in blue_chars:
+            colored_art += f"[bold bright_blue]{char}[/bold bright_blue]"
+        elif char in white_chars:
+            colored_art += f"[white]{char}[/white]"
+        else:
+            colored_art += char
+
+    console = Console()
+    console.print(colored_art, justify="center")
+    console.print(Rule(style="dim cyan"))
+    console.print("[white]C2 Serverless Framework[/white]", justify="center")
+    console.print(Rule(style="dim cyan"))
+    print()
 
 
 def print_agents_table(agents_list: list):
