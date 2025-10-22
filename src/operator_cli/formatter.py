@@ -48,15 +48,17 @@ def print_agents_table(agents_list: list):
     table.add_column("Agent ID", style="dim", width=36)
     table.add_column("Last Seen", justify="left")
     table.add_column("Hostname", justify="left")
+    table.add_column("OS Name", justify="left")
     table.add_column("Source IP", justify="left")
 
     for agent in agents_list:
         agent_id = agent.get("agentId", "N/A")
         last_seen = agent.get("lastSeen", "N/A")
         hostname = agent.get("hostname", "N/A")
+        os_name = agent.get("os_name", "N/A")
         source_ip = agent.get("sourceIp", "N/A")
 
-        table.add_row(agent_id, last_seen, hostname, source_ip)
+        table.add_row(agent_id, last_seen, hostname, os_name, source_ip)
 
     console.print(table)
 

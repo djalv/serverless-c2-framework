@@ -30,6 +30,7 @@ def lambda_handler(event, context):
             }
         agent_data = json.loads(req_body)
         agent_host = agent_data.get("hostname")
+        agent_os = agent_data.get("os_name")
 
         # 2. Handle agent ID
         if "agentId" in agent_data:
@@ -58,6 +59,7 @@ def lambda_handler(event, context):
             "agentId": agent_id,
             "lastSeen": actual_time,
             "hostname": agent_host,
+            "os_name": agent_os,
             "sourceIp": source_ip,
         }
 

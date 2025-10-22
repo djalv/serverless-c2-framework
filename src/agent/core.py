@@ -1,3 +1,4 @@
+import os
 import time
 import socket
 import config
@@ -12,8 +13,9 @@ def run_agent_loop():
     while True:
         agent_id = state.get_agent_id()
         hostname = socket.gethostname()
+        os_name = os.uname().sysname
 
-        payload = {"hostname": hostname}
+        payload = {"hostname": hostname, "os_name": os_name}
 
         if agent_id:
             payload["agentId"] = agent_id
