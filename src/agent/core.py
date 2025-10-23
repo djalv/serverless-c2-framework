@@ -13,7 +13,6 @@ def run_agent_loop():
     while True:
         agent_id = state.get_agent_id()
         hostname = socket.gethostname()
-        if os.uname.
         os_name = f"{platform.system()} {platform.release()}"
 
         payload = {"hostname": hostname, "os_name": os_name}
