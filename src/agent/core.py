@@ -1,6 +1,7 @@
 import os
 import time
 import socket
+import platform
 import config
 import state
 import comms
@@ -13,7 +14,7 @@ def run_agent_loop():
     while True:
         agent_id = state.get_agent_id()
         hostname = socket.gethostname()
-        os_name = os.uname().sysname
+        os_name = f"{platform.version()} {platform.release()}"
 
         payload = {"hostname": hostname, "os_name": os_name}
 
