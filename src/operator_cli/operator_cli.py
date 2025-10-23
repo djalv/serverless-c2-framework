@@ -71,7 +71,7 @@ if __name__ == "__main__":
                     continue
                 else:
                     while True:
-                        command = input(f"c2 ({selected_agent}) > ").strip()
+                        command = input(f"c2 ({selected_agent}) run > ").strip()
 
                         if not command:
                             continue
