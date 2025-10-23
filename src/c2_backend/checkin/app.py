@@ -11,12 +11,20 @@ from botocore.exceptions import ClientError
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-TABLE_NAME = os.environ.get("TABLE_NAME")
 DYNAMODB_CLIENTE = boto3.resource("dynamodb")
-TABLE = DYNAMODB_CLIENTE.Table(TABLE_NAME)
 
 
 def lambda_handler(event, context):
+    TABLE_NAME = os.environ.get("TABLE_NAME")
+    if not TABLE_NAME:
+        logger.error("Environment variable TABLE_NAME is not set.")
+        return {
+            "statusCode": 500,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"error": "Server configuration error"}),
+        }
+    TABLE = DYNAMODB_CLIENTE.Table(TABLE_NAME)
+
     try:
         # 1. Extract and validate request data
         req_body = event.get("body")
@@ -48,7 +56,7 @@ def lambda_handler(event, context):
             logger.error(f"Error fetching task from DynamoDB: {e}")
 
         # 3. Prepare the item for saving to DynamoDB
-        actual_time = datetime.datetime.utcnow().isoformat()
+        actual_time = datetime.datetime.now(datetime.UTC).isoformat()
         source_ip = (
             event.get("requestContext", {})
             .get("identity", {})

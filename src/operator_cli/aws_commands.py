@@ -70,9 +70,7 @@ def execute_task_wait_result(agent_id, command):
         response_before = s3_client.list_objects_v2(
             Bucket=RESULTS_BUCKET_NAME, Prefix=prefix
         )
-        old_results = {
-            obj["Key"] for obj in response_before.get("Contents", [])
-        }
+        old_results = {obj["Key"] for obj in response_before.get("Contents", [])}
         # print(f"Sending task '{command}' to agent {agent_id}...")
 
         if not send_task_to_agent(agent_id, command):
@@ -88,9 +86,7 @@ def execute_task_wait_result(agent_id, command):
             response_after = s3_client.list_objects_v2(
                 Bucket=RESULTS_BUCKET_NAME, Prefix=prefix
             )
-            current_results = {
-                obj["Key"] for obj in response_after.get("Contents", [])
-            }
+            current_results = {obj["Key"] for obj in response_after.get("Contents", [])}
 
             new_files = current_results - old_results
 

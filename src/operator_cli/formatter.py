@@ -16,7 +16,7 @@ def print_banner():
   ░   ▒      ░    ░       ░  ░░ ░   ░     ░░   ░  ▒ ░░  ░  ░  
       ░  ░   ░  ░         ░  ░  ░   ░  ░   ░      ░        ░  
                                                               
-""" # noqa W291
+"""  # noqa W291
     blue_chars = ["▓", "█", "▄", "▀"]
     white_chars = ["▒", "░"]
 
