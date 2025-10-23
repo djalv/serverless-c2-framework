@@ -37,7 +37,7 @@ jobs:
         run: |
           flake8 src/ tests/ --count --show-source --statistics --max-line-length=120
 
-      - name: Run integration tests with pytest
-        run: pytest tests/integration/
+      - name: Run tests with pytest
+        run: pytest tests/
         env:
           API_ENDPOINT_URL: ${{ secrets.API_ENDPOINT_URL }}
