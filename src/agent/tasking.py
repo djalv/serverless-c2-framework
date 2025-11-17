@@ -18,4 +18,3 @@ def execute_task(command):
     except Exception as e:
         print(f"[ERROR] Error executing task on host: {e}")
         return f"Failed to execute command on host. Error: {e}"
-
