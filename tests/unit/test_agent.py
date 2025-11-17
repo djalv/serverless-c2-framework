@@ -1,9 +1,11 @@
 import pytest
 import requests
+import subprocess
 from unittest.mock import patch, Mock, MagicMock, mock_open
 from src.agent.comms import perform_checkin, send_results
 from src.agent.config import load_config
 from src.agent.state import get_agent_id, save_agent_id, STATE_FILE
+from src.agent.tasking import execute_task
 
 # Testing agent.comms
 @pytest.fixture
@@ -152,3 +154,48 @@ def test_save_agent_id_writes_id_to_file_correctly(mocker):
     save_agent_id(content_to_write)
     mock_open_write.assert_called_once_with(STATE_FILE, 'w')
     mock_open_write().write.assert_called_once_with(content_to_write)
+
+# Testing agent.tasking
+@patch("src.agent.tasking.subprocess.run")
+def test_execute_task_returns_stdout_on_success(mock_run):
+    command = "Testing Command"
+    command_out = "Testing Command Success"
+
+    mock_run.return_value = Mock(
+        stdout = command_out,
+        stderr = "",
+        returncode = 0
+    )
+
+    result = execute_task(command)
+    assert result == command_out
+    mock_run.assert_called_once_with(command, shell=True, capture_output=True, text=True, timeout=30)
+
+@patch("src.agent.tasking.subprocess.run")
+def test_execute_task_returns_stderr_on_command_failure(mock_run):
+    command = "Testing Command"
+    command_out = "Testing command not found"
+
+    mock_run.return_value = Mock(
+        stdout = "",
+        stderr = "Testing command not found",
+        returncode = 1
+    )
+
+    result = execute_task(command)
+    assert result == f"Error: {command_out}"
+    mock_run.assert_called_once_with(command, shell=True, capture_output=True, text=True, timeout=30)
+
+@patch("src.agent.tasking.subprocess.run")
+def test_execute_task_returns_error_string_on_exception(mock_run):
+    command = "Testing Command"
+
+    mock_exception = subprocess.TimeoutExpired(cmd=command, timeout=30)
+    mock_run.side_effect = mock_exception
+
+    result = execute_task(command)
+
+    assert f"Failed to execute command on host" in result
+    assert str(mock_exception) in result
+
+    mock_run.assert_called_once_with(command, shell=True, capture_output=True, text=True, timeout=30)
