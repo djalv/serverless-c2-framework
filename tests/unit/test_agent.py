@@ -153,7 +153,7 @@ def test_get_agent_id_returns_none(mocker):
     mocker.patch("os.path.exists", return_value=False)
 
     agent_id = get_agent_id()
-    assert agent_id == None
+    assert agent_id is None
 
 
 def test_save_agent_id_writes_id_to_file_correctly(mocker):
@@ -208,7 +208,7 @@ def test_execute_task_returns_error_string_on_exception(mock_run):
 
     result = execute_task(command)
 
-    assert f"Failed to execute command on host" in result
+    assert "Failed to execute command on host" in result
     assert str(mock_exception) in result
 
     mock_run.assert_called_once_with(
@@ -412,6 +412,8 @@ def test_agent_iteration_handles_checkin_failure_gracefully(mocker):
 
     mock_get_id.assert_called_once()
     mock_hostname.assert_called_once()
+    mock_osname_system.assert_called_once()
+    mock_osname_release.assert_called_once()
 
     expected_payload = {
         "hostname": fake_hostname,
