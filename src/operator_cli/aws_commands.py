@@ -67,9 +67,7 @@ def execute_task_wait_result(agent_id, command):
 
     try:
         prefix = f"{agent_id}/"
-        response_before = s3_client.list_objects_v2(
-            Bucket=RESULTS_BUCKET_NAME, Prefix=prefix
-        )
+        response_before = s3_client.list_objects_v2(Bucket=RESULTS_BUCKET_NAME, Prefix=prefix)
         old_results = {obj["Key"] for obj in response_before.get("Contents", [])}
         # print(f"Sending task '{command}' to agent {agent_id}...")
 
@@ -83,9 +81,7 @@ def execute_task_wait_result(agent_id, command):
         for i in range(timeout_seconds // poll_interval_seconds):
             time.sleep(poll_interval_seconds)
 
-            response_after = s3_client.list_objects_v2(
-                Bucket=RESULTS_BUCKET_NAME, Prefix=prefix
-            )
+            response_after = s3_client.list_objects_v2(Bucket=RESULTS_BUCKET_NAME, Prefix=prefix)
             current_results = {obj["Key"] for obj in response_after.get("Contents", [])}
 
             new_files = current_results - old_results
@@ -94,9 +90,7 @@ def execute_task_wait_result(agent_id, command):
                 new_file_key = new_files.pop()
                 # print(f"New result found: {new_file_key}")
 
-                file_object = s3_client.get_object(
-                    Bucket=RESULTS_BUCKET_NAME, Key=new_file_key
-                )
+                file_object = s3_client.get_object(Bucket=RESULTS_BUCKET_NAME, Key=new_file_key)
                 file_content = file_object["Body"].read().decode("utf-8")
                 return file_content
 

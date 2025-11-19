@@ -31,16 +31,8 @@ def dynamodb_mock(fake_aws_credentials):
 
 
 def test_list_agents_returns_list_on_success(dynamodb_mock, monkeypatch):
-    old_agent = {
-        "agentId": "agent-old",
-        "hostname": "host-old",
-        "lastSeen": "2025-10-16T10:00:00"
-    }
-    new_agent = {
-        "agentId": "agent-new",
-        "hostname": "host-new",
-        "lastSeen": "2025-10-16T12:00:00"
-    }
+    old_agent = {"agentId": "agent-old", "hostname": "host-old", "lastSeen": "2025-10-16T10:00:00"}
+    new_agent = {"agentId": "agent-new", "hostname": "host-new", "lastSeen": "2025-10-16T12:00:00"}
 
     dynamodb_mock.put_item(Item=old_agent)
     dynamodb_mock.put_item(Item=new_agent)
@@ -49,9 +41,9 @@ def test_list_agents_returns_list_on_success(dynamodb_mock, monkeypatch):
 
     result = aws_commands.list_agents()
     assert isinstance(result, list)
-    
+
     assert len(result) == 2
-    
+
     assert result[0]["agentId"] == "agent-new"
     assert result[1]["agentId"] == "agent-old"
 
@@ -63,11 +55,12 @@ def test_list_agents_returns_empty_list_when_table_reference_is_none(monkeypatch
 
     assert result == []
 
+
 def test_list_agents_returns_empty_list_on_client_error(monkeypatch):
     mock_table = MagicMock()
 
-    error_response = {'Error': {'Code': 'AccessDeniedException', 'Message': 'Access Denied'}}
-    mock_exception = ClientError(error_response, 'Scan')
+    error_response = {"Error": {"Code": "AccessDeniedException", "Message": "Access Denied"}}
+    mock_exception = ClientError(error_response, "Scan")
 
     mock_table.scan.side_effect = mock_exception
     monkeypatch.setattr(aws_commands, "agents_table", mock_table)
@@ -75,7 +68,7 @@ def test_list_agents_returns_empty_list_on_client_error(monkeypatch):
     result = aws_commands.list_agents()
 
     assert result == []
-    
+
     mock_table.scan.assert_called_once()
 
 
@@ -122,14 +115,15 @@ def test_send_task_to_agent_returns_false_when_table_is_none(monkeypatch):
 
     assert not result
 
+
 def test_send_task_to_agent_handles_client_error(monkeypatch):
     mock_table = MagicMock()
 
-    error_response = {'Error': {'Code': 'ProvisionedThroughputExceededException', 'Message': 'Rate exceeded'}}
-    mock_exception = ClientError(error_response, 'UpdateItem')
+    error_response = {"Error": {"Code": "ProvisionedThroughputExceededException", "Message": "Rate exceeded"}}
+    mock_exception = ClientError(error_response, "UpdateItem")
 
     mock_table.update_item.side_effect = mock_exception
-    
+
     monkeypatch.setattr(aws_commands, "agents_table", mock_table)
 
     agent_id = "EXISTING-AGENT-ID-456"
@@ -139,5 +133,3 @@ def test_send_task_to_agent_handles_client_error(monkeypatch):
 
     assert not result
     mock_table.update_item.assert_called_once()
-
-

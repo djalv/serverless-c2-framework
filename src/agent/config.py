@@ -29,4 +29,3 @@ def load_config():
     except ValueError as e:
         print(f"[CRITICAL] Invalid value in configuration: {e}")
         raise
-

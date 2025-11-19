@@ -35,9 +35,7 @@ def test_perform_checkin_returns_json_on_http_200(mock_post, api_setup):
     result = perform_checkin(api_setup["url"], api_setup["data"])
 
     assert result == expected
-    mock_post.assert_called_once_with(
-        api_setup["url"], json=api_setup["data"], timeout=10
-    )
+    mock_post.assert_called_once_with(api_setup["url"], json=api_setup["data"], timeout=10)
 
 
 @patch("src.agent.comms.requests.post")
@@ -47,9 +45,8 @@ def test_perform_checkin_returns_none_on_network_failure(mock_post, api_setup):
     result = perform_checkin(api_setup["url"], api_setup["data"])
 
     assert result is None
-    mock_post.assert_called_once_with(
-        api_setup["url"], json=api_setup["data"], timeout=10
-    )
+    mock_post.assert_called_once_with(api_setup["url"], json=api_setup["data"], timeout=10)
+
 
 @patch("src.agent.comms.requests.post")
 def test_perform_checkin_returns_none_on_http_error(mock_post, api_setup):
@@ -58,9 +55,8 @@ def test_perform_checkin_returns_none_on_http_error(mock_post, api_setup):
     result = perform_checkin(api_setup["url"], api_setup["data"])
 
     assert result is None
-    mock_post.assert_called_once_with(
-        api_setup["url"], json=api_setup["data"], timeout=10
-    )
+    mock_post.assert_called_once_with(api_setup["url"], json=api_setup["data"], timeout=10)
+
 
 @patch("src.agent.comms.requests.post")
 def test_send_results_returns_true_on_http_200(mock_post, api_setup):
@@ -75,9 +71,7 @@ def test_send_results_returns_true_on_http_200(mock_post, api_setup):
     result = send_results(api_setup["results_url"], agent_id, task_result)
 
     assert result
-    mock_post.assert_called_once_with(
-        api_setup["results_url"], json=payload, timeout=10
-    )
+    mock_post.assert_called_once_with(api_setup["results_url"], json=payload, timeout=10)
 
 
 @patch("src.agent.comms.requests.post")
@@ -91,9 +85,8 @@ def test_send_results_returns_false_on_network_failure(mock_post, api_setup):
     result = send_results(api_setup["results_url"], agent_id, task_result)
 
     assert not result
-    mock_post.assert_called_once_with(
-        api_setup["results_url"], json=payload, timeout=10
-    )
+    mock_post.assert_called_once_with(api_setup["results_url"], json=payload, timeout=10)
+
 
 @patch("src.agent.comms.requests.post")
 def test_send_results_returns_false_on_http_error(mock_post, api_setup):
@@ -106,9 +99,7 @@ def test_send_results_returns_false_on_http_error(mock_post, api_setup):
     result = send_results(api_setup["results_url"], agent_id, task_result)
 
     assert not result
-    mock_post.assert_called_once_with(
-        api_setup["results_url"], json=payload, timeout=10
-    )
+    mock_post.assert_called_once_with(api_setup["results_url"], json=payload, timeout=10)
 
 
 # Testing agent.config
@@ -177,7 +168,7 @@ def test_load_config_raises_error_when_missing_key(mock_config_parser, config_se
 
     with pytest.raises(KeyError):
         load_config()
-    
+
     mock_config_parser.assert_called_once()
     mock_instance.read.assert_called_once_with("src/agent/config.ini")
 
@@ -197,7 +188,7 @@ def test_load_config_raises_error_when_invalid_value(mock_config_parser, config_
 
     with pytest.raises(ValueError):
         load_config()
-    
+
     mock_config_parser.assert_called_once()
     mock_instance.read.assert_called_once_with("src/agent/config.ini")
 
@@ -227,9 +218,9 @@ def test_get_agent_id_returns_none_for_empty_file(mocker):
     mocker.patch("builtins.open", mock_open(read_data=""))
 
     agent_id = get_agent_id()
-    
+
     assert agent_id is None
-    
+
 
 def test_save_agent_id_writes_id_to_file_correctly(mocker):
     content_to_write = "NEW-AGENT-ID-456"
@@ -252,9 +243,7 @@ def test_execute_task_returns_stdout_on_success(mock_run):
 
     result = execute_task(command)
     assert result == command_out
-    mock_run.assert_called_once_with(
-        command, shell=True, capture_output=True, text=True, timeout=30
-    )
+    mock_run.assert_called_once_with(command, shell=True, capture_output=True, text=True, timeout=30)
 
 
 @patch("src.agent.tasking.subprocess.run")
@@ -262,16 +251,12 @@ def test_execute_task_returns_stderr_on_command_failure(mock_run):
     command = "Testing Command"
     command_out = "Testing command not found"
 
-    mock_run.return_value = Mock(
-        stdout="", stderr="Testing command not found", returncode=1
-    )
+    mock_run.return_value = Mock(stdout="", stderr="Testing command not found", returncode=1)
 
     result = execute_task(command)
     assert result == f"Error: {command_out}"
 
-    mock_run.assert_called_once_with(
-        command, shell=True, capture_output=True, text=True, timeout=30
-    )
+    mock_run.assert_called_once_with(command, shell=True, capture_output=True, text=True, timeout=30)
 
 
 @patch("src.agent.tasking.subprocess.run")
@@ -286,9 +271,7 @@ def test_execute_task_returns_error_string_on_exception(mock_run):
     assert "Failed to execute command on host" in result
     assert str(mock_exception) in result
 
-    mock_run.assert_called_once_with(
-        command, shell=True, capture_output=True, text=True, timeout=30
-    )
+    mock_run.assert_called_once_with(command, shell=True, capture_output=True, text=True, timeout=30)
 
 
 # Testing agent.core
@@ -339,23 +322,13 @@ def test_agent_iteration_handles_existing_agent_without_task(mocker):
     fake_hostname = "test-host"
     fake_osname = "test-os 19"
 
-    mock_get_id = mocker.patch(
-        "src.agent.core.state.get_agent_id", return_value=fake_agent_id
-    )
-    mock_hostname = mocker.patch(
-        "src.agent.core.socket.gethostname", return_value=fake_hostname
-    )
-    mock_osname_system = mocker.patch(
-        "src.agent.core.platform.system", return_value="test-os"
-    )
-    mock_osname_release = mocker.patch(
-        "src.agent.core.platform.release", return_value="19"
-    )
+    mock_get_id = mocker.patch("src.agent.core.state.get_agent_id", return_value=fake_agent_id)
+    mock_hostname = mocker.patch("src.agent.core.socket.gethostname", return_value=fake_hostname)
+    mock_osname_system = mocker.patch("src.agent.core.platform.system", return_value="test-os")
+    mock_osname_release = mocker.patch("src.agent.core.platform.release", return_value="19")
 
     mock_checkin_response = {"agentId": fake_agent_id, "task": "no-task-for-now"}
-    mock_checkin = mocker.patch(
-        "src.agent.core.comms.perform_checkin", return_value=mock_checkin_response
-    )
+    mock_checkin = mocker.patch("src.agent.core.comms.perform_checkin", return_value=mock_checkin_response)
 
     mock_save_id = mocker.patch("src.agent.core.state.save_agent_id")
 
@@ -393,33 +366,19 @@ def test_agent_iteration_handles_existing_agent_with_task(mocker):
     fake_osname = "test-os 19"
     fake_task = "test-task"
 
-    mock_get_id = mocker.patch(
-        "src.agent.core.state.get_agent_id", return_value=fake_agent_id
-    )
-    mock_hostname = mocker.patch(
-        "src.agent.core.socket.gethostname", return_value=fake_hostname
-    )
-    mock_osname_system = mocker.patch(
-        "src.agent.core.platform.system", return_value="test-os"
-    )
-    mock_osname_release = mocker.patch(
-        "src.agent.core.platform.release", return_value="19"
-    )
+    mock_get_id = mocker.patch("src.agent.core.state.get_agent_id", return_value=fake_agent_id)
+    mock_hostname = mocker.patch("src.agent.core.socket.gethostname", return_value=fake_hostname)
+    mock_osname_system = mocker.patch("src.agent.core.platform.system", return_value="test-os")
+    mock_osname_release = mocker.patch("src.agent.core.platform.release", return_value="19")
 
     mock_checkin_response = {"agentId": fake_agent_id, "task": fake_task}
-    mock_checkin = mocker.patch(
-        "src.agent.core.comms.perform_checkin", return_value=mock_checkin_response
-    )
+    mock_checkin = mocker.patch("src.agent.core.comms.perform_checkin", return_value=mock_checkin_response)
 
     mock_save_id = mocker.patch("src.agent.core.state.save_agent_id")
 
     expected_task_out = "test-task run successfully"
-    mock_execute_task = mocker.patch(
-        "src.agent.core.tasking.execute_task", return_value=expected_task_out
-    )
-    mock_send_results = mocker.patch(
-        "src.agent.core.comms.send_results", return_value=True
-    )
+    mock_execute_task = mocker.patch("src.agent.core.tasking.execute_task", return_value=expected_task_out)
+    mock_send_results = mocker.patch("src.agent.core.comms.send_results", return_value=True)
 
     agent_iteration(fake_api_url, fake_results_url, fake_sleep)
 
@@ -440,9 +399,7 @@ def test_agent_iteration_handles_existing_agent_with_task(mocker):
     mock_save_id.assert_called_once_with(fake_agent_id)
 
     mock_execute_task.assert_called_once_with(fake_task)
-    mock_send_results.assert_called_once_with(
-        fake_results_url, fake_agent_id, expected_task_out
-    )
+    mock_send_results.assert_called_once_with(fake_results_url, fake_agent_id, expected_task_out)
 
 
 def test_agent_iteration_handles_checkin_failure_gracefully(mocker):
@@ -453,22 +410,12 @@ def test_agent_iteration_handles_checkin_failure_gracefully(mocker):
     fake_hostname = "test-host"
     fake_osname = "test-os 19"
 
-    mock_get_id = mocker.patch(
-        "src.agent.core.state.get_agent_id", return_value=fake_agent_id
-    )
-    mock_hostname = mocker.patch(
-        "src.agent.core.socket.gethostname", return_value=fake_hostname
-    )
-    mock_osname_system = mocker.patch(
-        "src.agent.core.platform.system", return_value="test-os"
-    )
-    mock_osname_release = mocker.patch(
-        "src.agent.core.platform.release", return_value="19"
-    )
+    mock_get_id = mocker.patch("src.agent.core.state.get_agent_id", return_value=fake_agent_id)
+    mock_hostname = mocker.patch("src.agent.core.socket.gethostname", return_value=fake_hostname)
+    mock_osname_system = mocker.patch("src.agent.core.platform.system", return_value="test-os")
+    mock_osname_release = mocker.patch("src.agent.core.platform.release", return_value="19")
 
-    mock_checkin = mocker.patch(
-        "src.agent.core.comms.perform_checkin", return_value=None
-    )
+    mock_checkin = mocker.patch("src.agent.core.comms.perform_checkin", return_value=None)
 
     mock_save_id = mocker.patch("src.agent.core.state.save_agent_id")
     mock_execute_task = mocker.patch("src.agent.core.tasking.execute_task")
@@ -493,9 +440,7 @@ def test_agent_iteration_handles_checkin_failure_gracefully(mocker):
     mock_execute_task.assert_not_called()
     mock_send_results.assert_not_called()
 
-    mock_print.assert_any_call(
-        f"[INFO] Check-in failed. Trying again in {fake_sleep}s."
-    )
+    mock_print.assert_any_call(f"[INFO] Check-in failed. Trying again in {fake_sleep}s.")
 
 
 def test_agent_iteration_handles_with_no_agent_in_checkin(mocker):

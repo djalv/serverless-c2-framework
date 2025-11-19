@@ -57,11 +57,7 @@ def lambda_handler(event, context):
 
         # 3. Prepare the item for saving to DynamoDB
         actual_time = datetime.datetime.now(datetime.UTC).isoformat()
-        source_ip = (
-            event.get("requestContext", {})
-            .get("identity", {})
-            .get("sourceIp", "unknown")
-        )
+        source_ip = event.get("requestContext", {}).get("identity", {}).get("sourceIp", "unknown")
 
         saving_item = {
             "agentId": agent_id,
