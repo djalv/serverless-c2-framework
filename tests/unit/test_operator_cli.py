@@ -260,7 +260,7 @@ def test_print_banner_prints_art_and_rules(mock_console_cls, mock_rule_cls):
     mock_console_instance = mock_console_cls.return_value
 
     formatter.print_banner()
-    
+
     assert mock_console_instance.print.call_count == 4
     assert mock_rule_cls.call_count == 2
 
@@ -272,6 +272,7 @@ def test_print_agents_table_prints_error_message_on_empty_list(capsys):
 
     captured = capsys.readouterr()
     assert "[ERROR] No agents found." in captured.out
+
 
 @patch("src.operator_cli.formatter.Table")
 @patch("src.operator_cli.formatter.Console")
@@ -285,27 +286,22 @@ def test_print_agents_table_creates_table_and_adds_rows_correctly(mock_console_c
             "lastSeen": "2023-01-01",
             "hostname": "host-1",
             "os_name": "Linux",
-            "sourceIp": "1.1.1.1"
+            "sourceIp": "1.1.1.1",
         },
-        {
-            "agentId": "EXISTING-AGENT-ID-789",
-            "hostname": "host-2",
-            "os_name": "Windows",
-            "sourceIp": "2.2.2.2"
-        }
+        {"agentId": "EXISTING-AGENT-ID-789", "hostname": "host-2", "os_name": "Windows", "sourceIp": "2.2.2.2"},
     ]
 
     formatter.print_agents_table(agents_data)
     mock_table_cls.assert_called_once_with(title="Agents", show_header=True, header_style="bold cyan")
 
     assert mock_table_instance.add_column.call_count == 5
-    
+
     expected_calls = [
         call("EXISTING-AGENT-ID-456", "2023-01-01", "host-1", "Linux", "1.1.1.1"),
-        call("EXISTING-AGENT-ID-789", "N/A", "host-2", "Windows", "2.2.2.2")
+        call("EXISTING-AGENT-ID-789", "N/A", "host-2", "Windows", "2.2.2.2"),
     ]
     mock_table_instance.add_row.assert_has_calls(expected_calls)
-    
+
     mock_console_instance.print.assert_called_once_with(mock_table_instance)
 
 
@@ -323,10 +319,7 @@ def test_print_task_result_creates_panel_and_prints(mock_console_cls, mock_panel
     formatter.print_task_result(result_content, agent_id)
 
     mock_panel_cls.fit.assert_called_once_with(
-        result_content,
-        title=f"Agent's Result {agent_id}",
-        border_style="green",
-        padding=(1, 2)
+        result_content, title=f"Agent's Result {agent_id}", border_style="green", padding=(1, 2)
     )
-    
+
     mock_console_instance.print.assert_called_once_with(mock_panel_instance)

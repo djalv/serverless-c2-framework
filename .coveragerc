@@ -1,0 +1,16 @@
+[run]
+branch = True
+source = src
+
+[report]
+# Ignorar arquivos que não precisam de teste (pontos de entrada)
+omit =
+    src/agent/main.py
+    src/c2_backend/checkin/__init__.py
+    src/c2_backend/store_results/__init__.py
+    src/__init__.py
+    src/agent/__init__.py
+    src/c2_backend/__init__.py
+    src/operator_cli/__init__.py
+
+show_missing = True
