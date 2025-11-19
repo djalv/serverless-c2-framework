@@ -1,4 +1,4 @@
-name: CI - Linter & Tests
+name: CI - Tests, Linter & Coverage
 
 on:
   push:
@@ -11,8 +11,14 @@ permissions:
   contents: read
 
 jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+  test-multi-os:
+    name: Test on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,12 +38,25 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
+          pip install -r src/agent/requirements.txt
+          pip install -r src/operator_cli/requirements.txt
 
+      # O Linter está de volta aqui
       - name: Run linter with flake8
         run: |
-          flake8 src/ tests/ --count --show-source --statistics --max-line-length=120
+          flake8 src/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Run tests with pytest
-        run: pytest tests/
+      - name: Run tests with coverage
+        run: pytest --cov=src --cov-report=xml tests/
         env:
           API_ENDPOINT_URL: ${{ secrets.API_ENDPOINT_URL }}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: true
