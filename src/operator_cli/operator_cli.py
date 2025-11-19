@@ -1,6 +1,6 @@
 import click
-import aws_commands
-import formatter
+from . import aws_commands
+from . import formatter
 
 
 def handle_list_agents():
@@ -32,7 +32,7 @@ def task(agent_id, command):
     handle_send_task(agent_id, command)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__": # pragma: no cover
     formatter.print_banner()
     selected_agent = None
 

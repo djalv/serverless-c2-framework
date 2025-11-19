@@ -6,6 +6,7 @@ from moto import mock_aws
 from botocore.exceptions import ClientError
 from src.operator_cli import aws_commands
 from src.operator_cli import formatter
+from src.operator_cli.operator_cli import handle_list_agents, handle_send_task
 
 
 @pytest.fixture(scope="function")
@@ -323,3 +324,45 @@ def test_print_task_result_creates_panel_and_prints(mock_console_cls, mock_panel
     )
 
     mock_console_instance.print.assert_called_once_with(mock_panel_instance)
+
+
+@patch("src.operator_cli.operator_cli.formatter.print_agents_table")
+@patch("src.operator_cli.operator_cli.aws_commands.list_agents")
+def test_handle_list_agents_retrieves_and_prints_agents(mock_list_agents, mock_print_table):
+    fake_agents_list = [
+        {"agentId": "EXISTING-AGENT-ID-456", "hostname": "host-1"},
+        {"agentId": "EXISTING-AGENT-ID-789", "hostname": "host-2"}
+    ]
+    mock_list_agents.return_value = fake_agents_list
+    handle_list_agents()
+
+    mock_list_agents.assert_called_once()
+
+    mock_print_table.assert_called_once_with(fake_agents_list)
+
+
+@patch("src.operator_cli.operator_cli.formatter.print_agents_table")
+@patch("src.operator_cli.operator_cli.aws_commands.list_agents")
+def test_handle_list_agents_handles_empty_list(mock_list_agents, mock_print_table):
+    mock_list_agents.return_value = []
+
+    handle_list_agents()
+
+    mock_list_agents.assert_called_once()
+    mock_print_table.assert_called_once_with([])
+
+
+@patch("src.operator_cli.operator_cli.formatter.print_task_result")
+@patch("src.operator_cli.operator_cli.aws_commands.execute_task_wait_result")
+def test_handle_send_task_executes_and_prints_result(mock_execute_task, mock_print_result):
+    fake_agent_id = "EXISTING-AGENT-ID-456"
+    fake_command = "whoami"
+    fake_result_content = "root\n"
+
+    mock_execute_task.return_value = fake_result_content
+
+    handle_send_task(fake_agent_id, fake_command)
+
+    mock_execute_task.assert_called_once_with(fake_agent_id, fake_command)
+
+    mock_print_result.assert_called_once_with(fake_result_content, fake_agent_id)
