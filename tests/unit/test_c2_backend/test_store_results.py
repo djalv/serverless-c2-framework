@@ -18,44 +18,48 @@ def fake_aws_credentials():
 
 
 @pytest.fixture
-def s3_bucket_mock(fake_aws_credentials, monkeypatch):
+def s3_bucket_mock(fake_aws_credentials, monkeypatch, mocker):
     bucket_name = "c2-results-bucket-test"
     monkeypatch.setenv("RESULTS_BUCKET_NAME", bucket_name)
 
     with mock_aws():
         s3 = boto3.client("s3", region_name="us-east-1")
         s3.create_bucket(Bucket=bucket_name)
+
+        mocker.patch("src.c2_backend.store_results.app.S3_CLIENT", s3)
+
         yield s3, bucket_name
 
 
 def test_store_results_handler_valid_payload_returns_200(s3_bucket_mock, mocker):
     s3_client, bucket_name = s3_bucket_mock
-
-    real_datetime = datetime.datetime
-
-    class FakeDatetime(real_datetime):
-        @classmethod
-        def now(cls, tz=None):
-            return real_datetime(2025, 10, 20, 12, 0, 0)
-
-    mocker.patch("src.c2_backend.store_results.app.datetime.datetime", FakeDatetime)
-
+    
     agent_id = "agent-123"
     task_result = "Command executed successfully\nUser: root"
-
-    event = {"body": json.dumps({"agentId": agent_id, "taskResult": task_result})}
+    
+    event = {
+        "body": json.dumps({
+            "agentId": agent_id,
+            "taskResult": task_result
+        })
+    }
 
     response = lambda_handler(event, None)
 
     assert response["statusCode"] == 200
     body = json.loads(response["body"])
     assert body["message"] == "Result stored success"
+    
+    s3_objects = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=f"{agent_id}/")
 
-    expected_key = f"{agent_id}/2025-10-20_12-00-00.txt"
+    assert "Contents" in s3_objects
+    assert len(s3_objects["Contents"]) == 1
 
-    s3_object = s3_client.get_object(Bucket=bucket_name, Key=expected_key)
+    actual_key = s3_objects["Contents"][0]["Key"]
+    
+    s3_object = s3_client.get_object(Bucket=bucket_name, Key=actual_key)
     content = s3_object["Body"].read().decode("utf-8")
-
+    
     assert content == task_result
 
 

@@ -19,7 +19,7 @@ def fake_aws_credentials():
 
 
 @pytest.fixture
-def dynamodb_mock(fake_aws_credentials, monkeypatch):
+def dynamodb_mock(fake_aws_credentials, monkeypatch, mocker):
     """Cria a tabela DynamoDB simulada."""
     TABLE_NAME = "c2-agents-table-test"
     monkeypatch.setenv("TABLE_NAME", TABLE_NAME)
@@ -32,6 +32,8 @@ def dynamodb_mock(fake_aws_credentials, monkeypatch):
             AttributeDefinitions=[{"AttributeName": "agentId", "AttributeType": "S"}],
             BillingMode="PAY_PER_REQUEST",
         )
+        mocker.patch("src.c2_backend.checkin.app.DYNAMODB_CLIENTE", dynamodb)
+        
         yield dynamodb.Table(TABLE_NAME)
 
 
