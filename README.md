@@ -1,43 +1,136 @@
-# Projeto de Teste de Software: Serverless C2 Framework
+# Aetheris: Serverless C2 Framework
 
-O projeto consiste no desenvolvimento e teste de um C2 (Command & Control) Framework utilizando uma arquitetura serverless na nuvem AWS.
+[![CI - Tests, Linter & Coverage](https://github.com/djalv/serverless-c2-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/djalv/serverless-c2-framework/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/djalv/serverless-c2-framework/graph/badge.svg)](https://codecov.io/gh/djalv/serverless-c2-framework)
 
 ---
 
-### 1. Membros
+### Nomes dos membros do grupo
 * **Álvaro Cândido de Oliveira Neto**
 
 ---
 
-### 2. Descrição
+### Breve explicação sobre o sistema
 
-O projeto propõe a construção de um C2 Framework, uma ferramenta essencial em operações de Red Team para simulação de adversários. Diferente de arquiteturas tradicionais que dependem de um servidor monolítico e sempre ativo, este projeto adota uma abordagem **serverless** (Funções como Serviço).
+O **Aetheris** é um sistema de Comando e Controle (C2) desenvolvido com uma arquitetura **serverless** na AWS. O objetivo do sistema é simular uma infraestrutura ofensiva moderna de *Red Team*, focada em furtividade e resiliência.
 
-O objetivo é criar uma infraestrutura de comando e controle que seja resiliente, escalável, de baixo custo e, principalmente, discreta (*stealth*), dificultando sua detecção e rastreamento.
-
-#### Fluxo de Funcionamento
-
-O sistema é distribuído e orientado a eventos, composto pelos seguintes fluxos principais:
-
-1.  **Check-in do Agente:** Um "agente" em uma máquina comprometida se comunica periodicamente com um endpoint de API, que invoca uma função serverless. A função registra a atividade do agente e verifica por novas tarefas em um banco de dados.
-2.  **Atribuição de Tarefas:** O "operador" utiliza uma interface de linha de comando para registrar novas tarefas para um agente específico no banco de dados.
-3.  **Execução e Coleta de Resultados:** No próximo check-in, o agente recebe a tarefa, executa o comando e envia o resultado para um segundo endpoint de API. Este, por sua vez, aciona outra função Lambda que armazena a saída em um serviço de armazenamento de objetos.
+Diferente de C2s tradicionais baseados em servidores fixos, o Aetheris utiliza componentes de nuvem efêmeros para gerenciar agentes comprometidos. O sistema é composto por três partes principais:
+1.  **Agente:** Um script executado na máquina alvo que realiza check-ins periódicos, recebe comandos e exfiltra resultados.
+2.  **Backend:** Uma API na AWS (API Gateway + Lambda) que gerencia a lógica de comunicação, armazena o estado no DynamoDB e guarda arquivos exfiltrados no S3.
+3.  **Operador CLI:** Uma interface de linha de comando interativa que permite ao operador gerenciar múltiplos agentes e enviar tarefas em tempo real.
 
 ---
 
-### 3. Possíveis Tecnologias
+### Breve explicação sobre as tecnologias utilizadas
 
-* #### Nuvem (Cloud - AWS)
-    * **AWS Lambda:** Para a execução do código do backend sem a necessidade de gerenciar servidores.
-    * **AWS API Gateway:** Para criar e gerenciar os endpoints HTTP que servirão como porta de entrada para a comunicação com os agentes.
-    * **AWS DynamoDB:** Como banco de dados NoSQL para gerenciar o estado dos agentes e a fila de tarefas de forma rápida e escalável.
-    * **AWS S3 (Simple Storage Service):** Para o armazenamento dos resultados dos comandos executados, ideal para saídas de texto ou binários.
-    * **AWS IAM (Identity and Access Management):** Para o gerenciamento fino de permissões entre os serviços, um pilar de segurança da arquitetura.
+O projeto foi construído utilizando uma stack moderna de desenvolvimento e testes:
 
-* #### Linguagem e Ferramentas
-    * **Python 3.x**: Linguagem principal para o desenvolvimento do backend, do agente e da CLI.
-    * **Boto3**: O SDK oficial da AWS para Python, utilizado para a comunicação entre os componentes e os serviços da AWS
-    * **Requests**: Biblioteca padrão para a realização de chamadas HTTP do agente para o API Gateway.
+* **Linguagem:** Python 3.11+ para todos os componentes.
+* **AWS Serverless:**
+    * **AWS Lambda:** Execução da lógica de backend (Check-in e Armazenamento).
+    * **Amazon DynamoDB:** Banco de dados NoSQL para persistência de estado.
+    * **Amazon S3:** Armazenamento de objetos para resultados de comandos.
+* **Infraestrutura como Código (IaC):** AWS SAM (Serverless Application Model) para definição e deploy da infraestrutura.
+* **Interface CLI:** Bibliotecas `click` e `rich` para criar uma experiência de terminal interativa e visualmente rica.
+* **Qualidade e Testes:**
+    * **Pytest:** Framework principal de testes.
+    * **Moto:** Biblioteca para simular (mockar) serviços da AWS inteiros em memória.
+    * **Pytest-Cov:** Para mensuração de cobertura de código.
+    * **GitHub Actions:** Pipeline de CI/CD para automação de testes em múltiplos sistemas operacionais (Linux, Windows, macOS).
 
-* #### Infraestrutura como Código (IaC)
-    * **AWS SAM (Serverless Application Model) ou Terraform:** Será explorado o uso de IaC para provisionar e gerenciar a infraestrutura na nuvem de forma automatizada e repetível.
+---
+
+### Como executar os testes localmente
+
+Para validar o sistema e rodar a suíte de testes na sua máquina, siga as instruções abaixo.
+
+#### 1. Configuração do Ambiente (Pré-requisitos)
+
+Certifique-se de ter o **Python 3.11+**, **AWS CLI** e **AWS SAM CLI** instalados.
+
+Clone o repositório e instale as dependências em um ambiente virtual isolado:
+
+```bash
+# 1. Clonar o repositório
+git clone [https://github.com/djalv/serverless-c2-framework.git](https://github.com/djalv/serverless-c2-framework.git)
+cd serverless-c2-framework
+
+# 2. Criar e ativar o ambiente virtual
+python3 -m venv .venv
+source .venv/bin/activate  # No Windows use: .\.venv\Scripts\activate
+
+# 3. Instalar dependências do projeto e de testes
+pip install -r requirements-dev.txt
+pip install -r src/agent/requirements.txt
+pip install -r src/operator_cli/requirements.txt
+```
+
+#### 2. Executar Testes de Unidade
+
+Estes testes validam a lógica interna de cada módulo (`agent`, `backend`, `cli`) utilizando Mocks. Eles são rápidos e não exigem conexão com a AWS, pois utilizam a biblioteca moto para simular a nuvem.
+
+```bash
+pytest tests/unit/
+```
+
+#### 3. Executar Testes de Integração e E2E
+
+Estes testes validam o fluxo completo do sistema conectando-se à infraestrutura real na AWS. Nota: Requer uma conta AWS configurada com `aws configure` e o deploy da infraestrutura realizado.
+
+##### Passo A: Fazer o Deploy (apenas na primeira vez)
+
+```bash
+sam build -t iac/template.yaml
+sam deploy --guided
+```
+
+Anote a URL da API (CheckInApiUrl) exibida nos "Outputs" ao final do deploy.
+
+##### Passo B: Configurar Variáveis e Rodar
+
+###### 1. Crie um arquivo .env na raiz do projeto com a URL da sua API:
+
+```bash
+API_ENDPOINT_URL="[https://xxxxxx.execute-api.us-east-1.amazonaws.com/Prod/checkin/](https://xxxxxx.execute-api.us-east-1.amazonaws.com/Prod/checkin/)"
+```
+
+###### 2. Execute os testes:
+
+```bash
+pytest tests/integration/ tests/e2e/
+```
+
+#### 4. Gerar Relatório de Cobertura
+
+Para medir a cobertura dos testes (incluindo cobertura de branches) e visualizar o relatório no terminal:
+
+```bash
+pytest --cov=src --cov-branch --cov-report=term-missing
+```
+
+### Como Executar a Ferramenta (Uso Manual)
+
+#### 1. Iniciar o Agente
+Em um terminal (na máquina alvo ou localmente para teste):
+
+```bash
+# Executar como módulo para garantir imports corretos
+python -m src.agent.main
+```
+
+#### 2. Iniciar a CLI do Operador
+Em outro terminal:
+
+```bash
+python src/operator_cli/operator_cli.py
+```
+
+Dentro da CLI Interativa:
+
+`agents`: Lista os agentes ativos.
+
+`select <AGENT_ID>`: Seleciona um agente para interagir.
+
+`run <COMANDO>`: Envia um comando para o agente selecionado e aguarda o resultado (ex: run whoami).
+
+`exit`: Sai da CLI.
