@@ -8,18 +8,27 @@ import logging
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-RESULTS_BUCKET_NAME = os.environ.get("RESULTS_BUCKET_NAME")
 S3_CLIENT = boto3.client("s3")
 
 
 def lambda_handler(event, context):
+    RESULTS_BUCKET_NAME = os.environ.get("RESULTS_BUCKET_NAME")
+
+    if not RESULTS_BUCKET_NAME:
+        logger.error("ERROR: Environment variable RESULTS_BUCKET_NAME is not set.")
+        return {
+            "statusCode": 500,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps({"error": "Server configuration error"}),
+        }
+
     try:
         req_body = event.get("body")
         if not req_body:
             logger.warning("ERROR: Request body is empty or missing.")
 
             return {
-                "statusCode": 400,
+                "statusCode": 400,  # Bad Request
                 "headers": {"Content-Type": "application/json"},
                 "body": json.dumps({"error": "body is empty or missing."}),
             }
@@ -45,7 +54,7 @@ def lambda_handler(event, context):
             }
         task_result = agent_data["taskResult"]
 
-        timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+        timestamp = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d_%H-%M-%S")
         s3_key = f"{agent_id}/{timestamp}.txt"
 
         S3_CLIENT.put_object(Bucket=RESULTS_BUCKET_NAME, Key=s3_key, Body=task_result)

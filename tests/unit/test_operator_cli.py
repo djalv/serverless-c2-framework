@@ -331,7 +331,7 @@ def test_print_task_result_creates_panel_and_prints(mock_console_cls, mock_panel
 def test_handle_list_agents_retrieves_and_prints_agents(mock_list_agents, mock_print_table):
     fake_agents_list = [
         {"agentId": "EXISTING-AGENT-ID-456", "hostname": "host-1"},
-        {"agentId": "EXISTING-AGENT-ID-789", "hostname": "host-2"}
+        {"agentId": "EXISTING-AGENT-ID-789", "hostname": "host-2"},
     ]
     mock_list_agents.return_value = fake_agents_list
     handle_list_agents()
