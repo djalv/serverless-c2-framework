@@ -122,15 +122,15 @@ python -m src.agent.main
 Em outro terminal:
 
 ```bash
-python src/operator_cli/operator_cli.py
+python -m src.operator_cli.operator_cli
 ```
 
 Dentro da CLI Interativa:
 
-`agents`: Lista os agentes ativos.
+* `agents`: Lista os agentes ativos.
 
-`select <AGENT_ID>`: Seleciona um agente para interagir.
+* `select <AGENT_ID>`: Seleciona um agente para interagir.
 
-`run <COMANDO>`: Envia um comando para o agente selecionado e aguarda o resultado (ex: run whoami).
+* `run <COMANDO>`: Envia um comando para o agente selecionado e aguarda o resultado (ex: run whoami).
 
-`exit`: Sai da CLI.
+* `exit`: Sai da CLI.
