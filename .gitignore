@@ -72,3 +72,5 @@ src/agent/config.ini
 
 # Project reports
 reports.txt
+
+src/agent/agent.id
