@@ -91,7 +91,7 @@ Anote a URL da API (CheckInApiUrl) exibida nos "Outputs" ao final do deploy.
 ###### 1. Crie um arquivo .env na raiz do projeto com a URL da sua API:
 
 ```bash
-API_ENDPOINT_URL="[https://xxxxxx.execute-api.us-east-1.amazonaws.com/Prod/checkin/](https://xxxxxx.execute-api.us-east-1.amazonaws.com/Prod/checkin/)"
+API_ENDPOINT_URL="https://xxxxxx.execute-api.us-east-1.amazonaws.com/Prod/checkin/"
 ```
 
 ###### 2. Execute os testes:
