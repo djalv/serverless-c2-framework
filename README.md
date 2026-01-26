@@ -134,3 +134,9 @@ Dentro da CLI Interativa:
 * `run <COMANDO>`: Envia um comando para o agente selecionado e aguarda o resultado (ex: run whoami).
 
 * `exit`: Sai da CLI.
+
+## ⚠️ Aviso Legal (Disclaimer)
+
+O **Aetheris** é uma ferramenta desenvolvida exclusivamente para fins educacionais e para testes de segurança autorizados (Red Teaming/Pentesting).
+
+O autor não se responsabiliza pelo uso indevido desta ferramenta. O acesso a sistemas de computadores sem autorização prévia é ilegal e punível por lei. Utilize com responsabilidade e ética.
