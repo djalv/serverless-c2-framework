@@ -6,3 +6,5 @@ click
 
 # Writing rich text (with color and style) to the terminal
 rich
+
+cryptography

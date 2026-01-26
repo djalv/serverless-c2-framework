@@ -2,6 +2,9 @@ import configparser
 import os
 
 
+AES_KEY = "PLACEHOLDER_CHANGE_ME"
+
+
 def load_config():
     """
     The agent's function is responsible for loading the settings.

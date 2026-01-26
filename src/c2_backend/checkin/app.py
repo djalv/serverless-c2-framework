@@ -37,11 +37,10 @@ def lambda_handler(event, context):
                 "body": json.dumps({"error": "body is empty or missing."}),
             }
         agent_data = json.loads(req_body)
-        agent_host = agent_data.get("hostname")
-        agent_os = agent_data.get("os_name")
+        encrypted_blob = agent_data.get("encrypted_data", "")
 
         # 2. Handle agent ID
-        if "agentId" in agent_data:
+        if "agentId" in agent_data and agent_data["agentId"]:
             agent_id = agent_data.get("agentId")
         else:
             agent_id = str(uuid.uuid4())
@@ -59,13 +58,7 @@ def lambda_handler(event, context):
         actual_time = datetime.datetime.now(datetime.UTC).isoformat()
         source_ip = event.get("requestContext", {}).get("identity", {}).get("sourceIp", "unknown")
 
-        saving_item = {
-            "agentId": agent_id,
-            "lastSeen": actual_time,
-            "hostname": agent_host,
-            "os_name": agent_os,
-            "sourceIp": source_ip,
-        }
+        saving_item = {"agentId": agent_id, "lastSeen": actual_time, "sourceIp": source_ip, "encrypted_data": encrypted_blob}
 
         # 4. Save the item to DynamoDB
         TABLE.put_item(Item=saving_item)

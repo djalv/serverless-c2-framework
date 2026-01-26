@@ -18,3 +18,5 @@ flake8
 
 # Python code formatter
 black
+
+cryptography

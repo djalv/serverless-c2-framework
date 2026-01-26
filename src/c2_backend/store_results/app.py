@@ -44,20 +44,20 @@ def lambda_handler(event, context):
                 "body": json.dumps({"error": "agentId is required."}),
             }
 
-        if "taskResult" not in agent_data:
-            logger.warning("ERROR: Task Result is empty or missing.")
+        if "encrypted_data" not in agent_data:
+            logger.warning("ERROR: Encrypted Data is empty or missing.")
 
             return {
                 "statusCode": 400,  # Bad Request
                 "headers": {"Content-Type": "application/json"},
-                "body": json.dumps({"error": "taskResult is required."}),
+                "body": json.dumps({"error": "encrypted_data is required."}),
             }
-        task_result = agent_data["taskResult"]
+
+        encrypted_blob = agent_data["encrypted_data"]
 
         timestamp = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d_%H-%M-%S")
         s3_key = f"{agent_id}/{timestamp}.txt"
-
-        S3_CLIENT.put_object(Bucket=RESULTS_BUCKET_NAME, Key=s3_key, Body=task_result)
+        S3_CLIENT.put_object(Bucket=RESULTS_BUCKET_NAME, Key=s3_key, Body=encrypted_blob)
 
         response_body = {"message": "Result stored success", "s3_key": s3_key}
 
